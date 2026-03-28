@@ -1,0 +1,100 @@
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+    
+    <div class="lg:col-span-4">
+        <div class="glass-card p-6 rounded-2xl sticky top-8">
+            <h3 class="text-xl font-bold mb-6 flex items-center">
+                <span class="bg-blue-500/20 text-blue-400 p-2 rounded-lg mr-3">➕</span>
+                Log Activity
+            </h3>
+
+            <form ng-submit="addWorkout()">
+                <div class="space-y-4">
+                    <div>
+                        <label class="text-xs text-slate-400 uppercase font-bold">Exercise Type</label>
+                        <select ng-model="newWorkout.type" class="input-field mt-1">
+                            <option>Running</option>
+                            <option>Cycling</option>
+                            <option>Weightlifting</option>
+                            <option>Yoga</option>
+                            <option>Swimming</option>
+                        </select>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="text-xs text-slate-400 uppercase font-bold">Duration (min)</label>
+                            <input type="number" ng-model="newWorkout.duration" class="input-field mt-1" required>
+                        </div>
+                        <div>
+                            <label class="text-xs text-slate-400 uppercase font-bold">Calories</label>
+                            <input type="number" ng-model="newWorkout.calories" class="input-field mt-1" required>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="text-xs text-slate-400 uppercase font-bold">Notes</label>
+                        <textarea ng-model="newWorkout.notes" class="input-field mt-1" rows="2" placeholder="How did it feel?"></textarea>
+                    </div>
+
+                    <button type="submit" class="btn-primary w-full py-3 rounded-xl font-bold mt-4">
+                        Save Workout
+                    </button>
+                </div>
+            </form>
+
+            <div ng-if="success" class="mt-4 p-3 bg-emerald-500/20 text-emerald-400 rounded-lg text-sm text-center border border-emerald-500/30">
+                {{success}}
+            </div>
+        </div>
+    </div>
+
+    <div class="lg:col-span-8">
+        <div class="glass-card rounded-2xl overflow-hidden">
+            <div class="p-6 border-b border-slate-800 flex justify-between items-center">
+                <h3 class="text-xl font-bold">Recent History</h3>
+                <span class="text-sm text-slate-400">{{workouts.length}} sessions logged</span>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left">
+                    <thead class="bg-slate-800/50 text-slate-400 text-xs uppercase">
+                        <tr>
+                            <th class="px-6 py-4">Activity</th>
+                            <th class="px-6 py-4">Stats</th>
+                            <th class="px-6 py-4">Date</th>
+                            <th class="px-6 py-4 text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-800">
+                        <tr ng-repeat="w in workouts | orderBy:'-date'" class="hover:bg-slate-700/30 transition-colors">
+                            <td class="px-6 py-4">
+                                <div class="font-semibold text-blue-400">{{w.type}}</div>
+                                <div class="text-xs text-slate-500 italic">{{w.notes || 'No notes'}}</div>
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="text-white">{{w.duration}}m</span>
+                                <span class="text-slate-500 mx-2">•</span>
+                                <span class="text-orange-400 font-medium">{{w.calories}} kcal</span>
+                            </td>
+                            <td class="px-6 py-4 text-sm text-slate-400">
+                                {{w.date}}
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <button ng-click="deleteWorkout(w._id, $index)" class="text-slate-500 hover:text-red-400 p-2 transition-colors">
+                                    🗑️
+                                </button>
+                            </td>
+                        </tr>
+                        <tr ng-if="workouts.length === 0">
+                            <td colspan="4" class="px-6 py-20 text-center text-slate-500">
+                                <p class="text-4xl mb-4">🏜️</p>
+                                <p>No workouts found. Start your journey today!</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>

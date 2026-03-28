@@ -1,0 +1,73 @@
+<div class="max-w-md mx-auto mt-12 fade-in">
+    <div class="glass-card p-8 rounded-3xl shadow-2xl relative overflow-hidden">
+        
+        <div class="text-center mb-10">
+            <div class="inline-block p-4 bg-blue-500/20 rounded-2xl mb-4">
+                <span class="text-3xl" ng-if="isLoginMode">🔐</span>
+                <span class="text-3xl" ng-if="!isLoginMode">🚀</span>
+            </div>
+            <h2 class="text-3xl font-extrabold text-white">
+                {{ isLoginMode ? 'Welcome Back' : 'Create Account' }}
+            </h2>
+            <p class="text-slate-400 mt-2">
+                {{ isLoginMode ? 'Enter your details to stay on track.' : 'Join the community and start tracking.' }}
+            </p>
+        </div>
+
+        <form ng-submit="isLoginMode ? login() : register()" novalidate>
+            <div class="space-y-5">
+                
+                <div ng-if="!isLoginMode" class="fade-in">
+                    <label class="text-xs text-slate-400 uppercase font-bold tracking-wider ml-1">Full Name</label>
+                    <input type="text" 
+                           ng-model="user.username" 
+                           class="input-field mt-1" 
+                           placeholder="John Doe" 
+                           ng-required="!isLoginMode">
+                </div>
+
+                <div>
+                    <label class="text-xs text-slate-400 uppercase font-bold tracking-wider ml-1">Email Address</label>
+                    <input type="email" 
+                           ng-model="user.email" 
+                           class="input-field mt-1" 
+                           placeholder="name@example.com" 
+                           required>
+                </div>
+
+                <div>
+                    <label class="text-xs text-slate-400 uppercase font-bold tracking-wider ml-1">Password</label>
+                    <input type="password" 
+                           ng-model="user.password" 
+                           class="input-field mt-1" 
+                           placeholder="••••••••" 
+                           required>
+                </div>
+
+                <button type="submit" 
+                        class="btn-primary w-full py-4 rounded-2xl font-bold text-lg mt-4 shadow-lg flex items-center justify-center gap-2"
+                        ng-disabled="loading">
+                    <span ng-if="loading" class="animate-spin text-xl">⏳</span>
+                    {{ loading ? 'Processing...' : (isLoginMode ? 'Sign In' : 'Sign Up') }}
+                </button>
+            </div>
+        </form>
+
+        <div class="mt-8 text-center text-sm border-t border-white/5 pt-6">
+            <p class="text-slate-400">
+                {{ isLoginMode ? "Don't have an account?" : "Already a member?" }}
+                <button ng-click="toggleMode()" class="text-blue-400 font-bold hover:underline ml-1">
+                    {{ isLoginMode ? 'Register Now' : 'Login instead' }}
+                </button>
+            </p>
+        </div>
+
+        <div ng-if="error" class="mt-6 p-4 bg-red-500/20 border border-red-500/40 text-red-200 text-sm rounded-xl text-center fade-in">
+            <strong>Oops!</strong> {{error}}
+        </div>
+    </div>
+
+    <p class="text-center text-slate-600 text-xs mt-8 uppercase tracking-widest font-bold">
+        FitTrack Pro &copy; 2026
+    </p>
+</div>
