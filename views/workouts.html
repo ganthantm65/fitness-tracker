@@ -7,7 +7,7 @@
                 Log Activity
             </h3>
 
-            <form ng-submit="addWorkout()">
+            <form ng-submit="saveWorkout()">
                 <div class="space-y-4">
                     <div>
                         <label class="text-xs text-slate-400 uppercase font-bold">Exercise Type</label>
@@ -80,7 +80,7 @@
                                 {{w.date}}
                             </td>
                             <td class="px-6 py-4 text-right">
-                                <button ng-click="deleteWorkout(w._id, $index)" class="text-slate-500 hover:text-red-400 p-2 transition-colors">
+                                <button ng-click="removeWorkout(w._id, $index)" class="text-slate-500 hover:text-red-400 p-2 transition-colors">
                                     🗑️
                                 </button>
                             </td>
