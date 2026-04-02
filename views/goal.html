@@ -1,49 +1,77 @@
-<div class="max-w-2xl mx-auto fade-in">
-    <div class="glass-card p-10 rounded-3xl shadow-xl">
-        <div class="mb-8">
-            <h2 class="text-3xl font-bold text-white">Set Your Targets</h2>
-            <p class="text-slate-400 mt-2">Define your daily and weekly fitness milestones.</p>
-        </div>
-
-        <form ng-submit="saveGoals()">
-            <div class="space-y-8">
-                <div class="p-6 bg-slate-800/40 rounded-2xl border border-slate-700">
-                    <div class="flex justify-between items-center mb-4">
-                        <label class="font-semibold text-lg">Daily Calorie Target</label>
-                        <span class="text-blue-400 font-bold text-xl">{{goals.dailyCalorieGoal}} kcal</span>
-                    </div>
-                    <input type="range" ng-model="goals.dailyCalorieGoal" min="1200" max="5000" step="50" 
-                           class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-blue-500">
-                    <div class="flex justify-between text-xs text-slate-500 mt-2">
-                        <span>1200 kcal</span>
-                        <span>5000 kcal</span>
-                    </div>
-                </div>
-
-                <div class="p-6 bg-slate-800/40 rounded-2xl border border-slate-700">
-                    <div class="flex justify-between items-center mb-4">
-                        <label class="font-semibold text-lg">Weekly Workouts</label>
-                        <span class="text-emerald-400 font-bold text-xl">{{goals.weeklyWorkoutGoal}} Days</span>
-                    </div>
-                    <div class="flex justify-between gap-2">
-                        <button type="button" ng-repeat="n in [1,2,3,4,5,6,7]" 
-                                ng-click="goals.weeklyWorkoutGoal = n"
-                                ng-class="goals.weeklyWorkoutGoal == n ? 'bg-emerald-500 text-white' : 'bg-slate-700 text-slate-300'"
-                                class="flex-1 py-3 rounded-xl font-bold transition-all">
-                            {{n}}
-                        </button>
-                    </div>
-                </div>
-
-                <button type="submit" class="btn-primary w-full py-4 rounded-2xl font-bold text-xl shadow-lg" ng-disabled="loading">
-                    <span ng-if="!loading">Update My Goals</span>
-                    <span ng-if="loading">Saving...</span>
-                </button>
+<div class="max-w-3xl mx-auto fade-in-up">
+    <div class="glass-panel text-center mb-8 flex flex-col md:flex-row items-center justify-center gap-12 py-10"
+         ng-class="{'glass-glow-success': getStatus() === 'success', 'glass-glow-warning': getStatus() === 'warning', 'glass-glow-danger': getStatus() === 'danger'}">
+        <div class="progress-ring">
+            <svg width="160" height="160">
+                <circle r="70" cx="80" cy="80"></circle>
+                <circle class="progress" ng-class="getStatus()" r="70" cx="80" cy="80" stroke-dasharray="440" ng-style="{'stroke-dashoffset': getDashOffset()}"></circle>
+            </svg>
+            <div class="ring-text">
+                <span class="text-3xl font-bold text-glow">{{progress || 0}}%</span>
+                <span class="text-[10px] uppercase tracking-widest text-slate-400 mt-1">Achieved</span>
             </div>
+        </div>
+        <div class="text-left">
+            <h2 class="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400 mb-2">Weight Goal Tracker</h2>
+            <div class="text-slate-300 mb-1">Target: <span class="text-white">{{goals.targetWeight || 0}} kg</span></div>
+            <div class="text-slate-300 mb-2">Current: <span class="text-white">{{goals.currentWeight || 0}} kg</span></div>
+            <div class="inline-flex items-center gap-2 bg-blue-500/10 px-4 py-2 rounded-full text-blue-300 text-sm font-semibold">
+                ⏳ {{daysRemaining || 0}} Days Remaining
+            </div>
+        </div>
+    </div>
+
+    <div class="dashboard-grid mb-8">
+        <div class="glass-panel stat-card">
+            <div class="stat-value">{{goals.currentWeight || 0}}</div>
+            <div class="stat-label">Current Weight</div>
+        </div>
+        <div class="glass-panel stat-card">
+            <div class="stat-value">{{goals.dailyCalorieGoal || 0}}</div>
+            <div class="stat-label">Daily Calories</div>
+        </div>
+        <div class="glass-panel stat-card">
+            <div class="stat-value">{{goals.weeklyWorkoutGoal || 0}}</div>
+            <div class="stat-label">Workouts/Week</div>
+        </div>
+    </div>
+
+    <div class="glass-panel">
+        <h3 class="text-xl font-bold mb-6 border-b border-white/10 pb-4">Update Targets</h3>
+        <form ng-submit="saveGoals()">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div class="flex flex-col gap-2">
+                    <label class="text-xs text-slate-400 uppercase">Current Weight (kg)</label>
+                    <input type="number" ng-model="goals.currentWeight" step="0.1" class="glass-input" required>
+                </div>
+                <div class="flex flex-col gap-2">
+                    <label class="text-xs text-slate-400 uppercase">Target Weight (kg)</label>
+                    <input type="number" ng-model="goals.targetWeight" step="0.1" class="glass-input" required>
+                </div>
+
+                <div class="flex flex-col gap-2 md:col-span-2">
+                    <label class="text-xs text-slate-400 uppercase">Target Date</label>
+                    <input type="date" ng-model="goals.targetDate" class="glass-input" required>
+                </div>
+
+                <div class="flex flex-col gap-2">
+                    <label class="text-xs text-slate-400 uppercase">Daily Calorie Goal</label>
+                    <input type="number" ng-model="goals.dailyCalorieGoal" class="glass-input" required>
+                </div>
+                <div class="flex flex-col gap-2">
+                    <label class="text-xs text-slate-400 uppercase">Weekly Workout Goal</label>
+                    <input type="number" ng-model="goals.weeklyWorkoutGoal" class="glass-input" required>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-glass-primary w-full py-4" ng-disabled="loading">
+                <span ng-if="!loading">Sync Progress</span>
+                <span ng-if="loading">Saving... ⏳</span>
+            </button>
         </form>
 
-        <div ng-if="message" class="mt-6 p-4 rounded-xl text-center font-medium animate-pulse"
-             ng-class="message.type == 'success' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-red-500/20 text-red-400 border border-red-500/30'">
+        <div ng-if="message" class="mt-6 p-4 rounded-xl text-center font-medium border transition-all"
+             ng-class="message.type === 'success' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30' : 'bg-red-500/10 text-red-400 border-red-500/30'">
             {{message.text}}
         </div>
     </div>

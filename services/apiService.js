@@ -1,61 +1,55 @@
-app.factory('apiService', function($http, $q, $location) {
+app.factory('apiService', function ($http, $q, $location) {
     const BASE_URL = 'http://localhost:5000/api';
 
-    // Helper to get the token from local storage
     const getToken = () => localStorage.getItem('token');
 
-    // Centralized Request Handler
     const request = (method, url, data = null) => {
+        const token = getToken();
         const config = {
             method: method,
             url: `${BASE_URL}${url}`,
             headers: {
-                'Authorization': getToken(),
+                'Authorization': token ? `Bearer ${token}` : '',
                 'Content-Type': 'application/json'
             },
             data: data
         };
 
         return $http(config).then(
-            (response) => response.data,
-            (rejection) => {
-                // Global Error Handling
-                if (rejection.status === 401) {
-                    // Token expired or invalid
+            res => res.data,
+            err => {
+                if (err.status === 401) {
                     localStorage.removeItem('token');
                     localStorage.removeItem('username');
                     $location.path('/login');
                 }
-                
-                // Return a user-friendly error message
-                const errorMsg = rejection.data && rejection.data.message 
-                                 ? rejection.data.message 
-                                 : "A network error occurred. Please try again.";
-                
-                return $q.reject(errorMsg);
+
+                const msg = err.data?.message || "Network error";
+                return $q.reject(msg);
             }
         );
     };
 
     return {
-        // Auth Endpoints
-        login: (credentials) => request('POST', '/auth/login', credentials),
-        register: (userData) => request('POST', '/auth/register', userData),
+        // Auth
+        login: (data) => request('POST', '/auth/login', data),
+        register: (data) => request('POST', '/auth/register', data),
 
-        // Workout Endpoints
+        // Workout
         getWorkouts: () => request('GET', '/workouts'),
-        addWorkout: (workout) => request('POST', '/workouts', workout),
+        addWorkout: (data) => request('POST', '/workouts', data),
         deleteWorkout: (id) => request('DELETE', `/workouts/${id}`),
 
-        // BMI Endpoints
+        // BMI
         getBMIs: () => request('GET', '/bmi'),
         addBMI: (data) => request('POST', '/bmi', data),
+        deleteBMI: (id) => request('DELETE', `/bmi/${id}`), // ✅ FIXED
 
-        // Goal Endpoints
+        // Goals
         getGoals: () => request('GET', '/goals'),
-        saveGoals: (goals) => request('POST', '/goals', goals),
+        saveGoals: (data) => request('POST', '/goals', data),
 
-        // Analytics
+        // Dashboard
         getSummary: () => request('GET', '/analytics/summary')
     };
 });

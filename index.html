@@ -1,53 +1,87 @@
 <!DOCTYPE html>
 <html ng-app="fitnessApp">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FitTrack Pro</title>
-    
+    <title>FitTrack Pro - Glassmorphism</title>
+
+    <!-- AngularJS -->
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular-route.min.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <link rel="stylesheet" href="css/style.css">
-</head>
-<body ng-controller="MainController" class="antialiased">
 
-    <header class="sticky top-0 z-50 glass-card border-none rounded-none border-b border-white/5" ng-if="isLoggedIn()">
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+
+    <style>
+        [ng-cloak],
+        .ng-cloak {
+            display: none !important;
+        }
+    </style>
+</head>
+
+<body ng-controller="MainController" class="antialiased" ng-cloak>
+
+    <!-- Header -->
+    <header class="glass-header sticky top-0 z-50 transition-all duration-300" ng-if="isLoggedIn()">
         <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
-            <div class="flex items-center gap-2">
-                <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center font-bold">F</div>
-                <span class="text-xl font-extrabold tracking-tight text-white">FitTrack<span class="text-blue-500">.</span></span>
+            <div class="flex items-center gap-3">
+                <div class="logo-box">F</div>
+                <span class="text-xl font-bold tracking-tight text-white">
+                    FitTrack<span class="text-glow">.</span>
+                </span>
             </div>
-            
-            <div class="hidden md:flex space-x-8 font-medium text-slate-300">
-                <a href="#!/dashboard" class="hover:text-white">Overview</a>
-                <a href="#!/workouts" class="hover:text-white">Workouts</a>
-                <a href="#!/bmi" class="hover:text-white">Health</a>
-                <a href="#!/goals" class="hover:text-white">Goals</a>
+
+            <div class="hidden md:flex space-x-8 font-medium text-gray-300">
+                <a href="#!/dashboard" class="nav-link" ng-class="{'active-nav': isActive('/dashboard')}">Overview</a>
+                <a href="#!/workouts" class="nav-link" ng-class="{'active-nav': isActive('/workouts')}">Workouts</a>
+                <a href="#!/bmi" class="nav-link" ng-class="{'active-nav': isActive('/bmi')}">Health</a>
+                <a href="#!/goals" class="nav-link" ng-class="{'active-nav': isActive('/goals')}">Goals</a>
+                <a href="#!/water" class="nav-link" ng-class="{'active-nav': isActive('/water')}">Hydration</a>
             </div>
 
             <div class="flex items-center gap-4">
-                <span class="text-xs text-slate-500 hidden sm:block">Logged in as <b>{{username}}</b></span>
-                <button ng-click="logout()" class="bg-red-500/10 hover:bg-red-500/20 text-red-400 px-4 py-2 rounded-xl text-sm font-semibold transition-all">
+                <span class="text-xs text-gray-400 hidden sm:block">
+                    Welcome, <b class="text-white">{{username}}</b>
+                </span>
+                <button ng-click="logout()"
+                    class="btn-glass-danger px-4 py-2 rounded-xl text-sm font-semibold transition-all">
                     Sign Out
                 </button>
             </div>
         </nav>
     </header>
 
+    <!-- Main Content -->
     <main class="container mx-auto mt-10 px-6 pb-20">
-        <div ng-view class="fade-in"></div>
+        <div ng-view class="fade-in-up"></div>
     </main>
 
+    <!-- Angular App -->
     <script src="app.js"></script>
-    <script src="services/apiService.js"></script>
+
+    <!-- ✅ SERVICES (FIXED ORDER) -->
+    <script src="services/apiService.js"></script> <!-- 🔥 IMPORTANT FIX -->
+    <script src="services/DashboardService.js"></script>
+
+    <!-- Controllers -->
     <script src="controllers/authController.js"></script>
     <script src="controllers/dashboardController.js"></script>
     <script src="controllers/workoutController.js"></script>
     <script src="controllers/bmiController.js"></script>
     <script src="controllers/goalController.js"></script>
+    <script src="controllers/waterTrackerController.js"></script>
+
 </body>
 </html>

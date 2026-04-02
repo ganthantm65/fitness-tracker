@@ -1,94 +1,103 @@
 <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
     
-    <div class="lg:col-span-4">
-        <div class="glass-card p-6 rounded-2xl sticky top-8">
-            <h3 class="text-xl font-bold mb-6 flex items-center">
-                <span class="bg-blue-500/20 text-blue-400 p-2 rounded-lg mr-3">➕</span>
-                Log Activity
+    <div class="lg:col-span-4 space-y-6">
+        <div class="glass-panel sticky top-24">
+            <h3 class="text-xl font-bold mb-6 flex items-center text-white">
+                <span class="mr-3 text-2xl">⚡</span> Log Workout
             </h3>
+
+            <!-- Timer Section -->
+            <div class="mb-6 p-4 rounded-xl border border-white/10 bg-white/5 text-center">
+                <div class="text-3xl font-mono font-bold text-glow mb-3">
+                    {{formatTime(timerSeconds)}}
+                </div>
+                <div class="flex justify-center gap-3">
+                    <button type="button" ng-click="toggleTimer()" class="btn-glass" ng-class="{'bg-red-500/20 border-red-500/50 text-red-500': isTimerRunning, 'border-emerald-500/50 text-emerald-400': !isTimerRunning}">
+                        {{isTimerRunning ? 'Stop' : 'Start'}}
+                    </button>
+                    <button type="button" ng-click="resetTimer()" ng-disabled="isTimerRunning || timerSeconds === 0" class="btn-glass">
+                        Reset
+                    </button>
+                </div>
+            </div>
 
             <form ng-submit="saveWorkout()">
                 <div class="space-y-4">
                     <div>
-                        <label class="text-xs text-slate-400 uppercase font-bold">Exercise Type</label>
-                        <select ng-model="newWorkout.type" class="input-field mt-1">
-                            <option>Running</option>
-                            <option>Cycling</option>
-                            <option>Weightlifting</option>
-                            <option>Yoga</option>
-                            <option>Swimming</option>
+                        <label class="text-xs text-slate-400 uppercase font-bold tracking-wider">Activity</label>
+                        <select ng-model="newWorkout.type" class="glass-input mt-1">
+                            <option value="Running">🏃 Running (MET: 9.8)</option>
+                            <option value="Cycling">🚴 Cycling (MET: 7.5)</option>
+                            <option value="Swimming">🏊 Swimming (MET: 6.0)</option>
+                            <option value="Gym">🏋️ Weightlifting (MET: 3.0)</option>
+                            <option value="Yoga">🧘 Yoga (MET: 2.5)</option>
                         </select>
                     </div>
 
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="text-xs text-slate-400 uppercase font-bold">Duration (min)</label>
-                            <input type="number" ng-model="newWorkout.duration" class="input-field mt-1" required>
-                        </div>
-                        <div>
-                            <label class="text-xs text-slate-400 uppercase font-bold">Calories</label>
-                            <input type="number" ng-model="newWorkout.calories" class="input-field mt-1" required>
-                        </div>
+                    <div>
+                        <label class="text-xs text-slate-400 uppercase font-bold tracking-wider">Duration (mins)</label>
+                        <input type="number" ng-model="newWorkout.duration" class="glass-input mt-1" required min="1">
+                        <p class="text-[10px] mt-1 text-slate-500">*Calories auto-calculated via MET standard (Avg 70kg).</p>
                     </div>
 
                     <div>
-                        <label class="text-xs text-slate-400 uppercase font-bold">Notes</label>
-                        <textarea ng-model="newWorkout.notes" class="input-field mt-1" rows="2" placeholder="How did it feel?"></textarea>
+                        <label class="text-xs text-slate-400 uppercase font-bold tracking-wider">Notes</label>
+                        <textarea ng-model="newWorkout.notes" class="glass-input mt-1" rows="2" placeholder="Intensity, feeling..."></textarea>
                     </div>
 
-                    <button type="submit" class="btn-primary w-full py-3 rounded-xl font-bold mt-4">
+                    <button type="submit" class="btn-glass-primary w-full mt-4">
                         Save Workout
                     </button>
                 </div>
             </form>
 
-            <div ng-if="success" class="mt-4 p-3 bg-emerald-500/20 text-emerald-400 rounded-lg text-sm text-center border border-emerald-500/30">
-                {{success}}
+            <div ng-if="feedback" class="mt-4 p-3 rounded-lg text-sm text-center border font-medium" ng-class="feedback.type === 'success' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30' : 'bg-red-500/10 text-red-400 border-red-500/30'">
+                {{feedback.text}}
             </div>
         </div>
     </div>
 
     <div class="lg:col-span-8">
-        <div class="glass-card rounded-2xl overflow-hidden">
-            <div class="p-6 border-b border-slate-800 flex justify-between items-center">
-                <h3 class="text-xl font-bold">Recent History</h3>
-                <span class="text-sm text-slate-400">{{workouts.length}} sessions logged</span>
+        <div class="glass-panel overflow-hidden p-0">
+            <div class="p-6 border-b border-white/10 flex justify-between items-center bg-black/20">
+                <h3 class="text-xl font-bold text-white">Recent History</h3>
+                <span class="text-sm text-blue-400 font-medium bg-blue-500/10 py-1 px-3 rounded-full">{{workouts.length}} Sessions</span>
             </div>
 
             <div class="overflow-x-auto">
-                <table class="w-full text-left">
-                    <thead class="bg-slate-800/50 text-slate-400 text-xs uppercase">
+                <table class="glass-table">
+                    <thead>
                         <tr>
-                            <th class="px-6 py-4">Activity</th>
-                            <th class="px-6 py-4">Stats</th>
-                            <th class="px-6 py-4">Date</th>
-                            <th class="px-6 py-4 text-right">Actions</th>
+                            <th>Activity</th>
+                            <th>Stats</th>
+                            <th>Date</th>
+                            <th class="text-right">Actions</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-slate-800">
-                        <tr ng-repeat="w in workouts | orderBy:'-date'" class="hover:bg-slate-700/30 transition-colors">
-                            <td class="px-6 py-4">
-                                <div class="font-semibold text-blue-400">{{w.type}}</div>
-                                <div class="text-xs text-slate-500 italic">{{w.notes || 'No notes'}}</div>
+                    <tbody>
+                        <tr ng-repeat="w in workouts" class="transition-colors">
+                            <td>
+                                <div class="font-semibold text-white">{{w.type}}</div>
+                                <div class="text-xs text-slate-400">{{w.notes || 'No notes'}}</div>
                             </td>
-                            <td class="px-6 py-4">
-                                <span class="text-white">{{w.duration}}m</span>
-                                <span class="text-slate-500 mx-2">•</span>
-                                <span class="text-orange-400 font-medium">{{w.calories}} kcal</span>
+                            <td>
+                                <span class="bg-white/10 px-2 py-1 rounded text-white text-sm">{{w.duration}}m</span>
+                                <span class="text-slate-500 mx-2">|</span>
+                                <span class="text-orange-400 font-medium text-sm">{{w.calories}} kcal</span>
                             </td>
-                            <td class="px-6 py-4 text-sm text-slate-400">
-                                {{w.date}}
+                            <td class="text-sm text-slate-400">
+                                {{w.date | date:'mediumDate'}}
                             </td>
-                            <td class="px-6 py-4 text-right">
-                                <button ng-click="removeWorkout(w._id, $index)" class="text-slate-500 hover:text-red-400 p-2 transition-colors">
-                                    🗑️
+                            <td class="text-right">
+                                <button ng-click="removeWorkout(w._id)" class="text-slate-500 hover:text-red-400 transition-colors p-2" title="Delete">
+                                    ✕
                                 </button>
                             </td>
                         </tr>
                         <tr ng-if="workouts.length === 0">
-                            <td colspan="4" class="px-6 py-20 text-center text-slate-500">
-                                <p class="text-4xl mb-4">🏜️</p>
-                                <p>No workouts found. Start your journey today!</p>
+                            <td colspan="4" class="py-16 text-center text-slate-400">
+                                <div class="text-4xl mb-3 opacity-50">📋</div>
+                                <p>No workouts recorded yet.</p>
                             </td>
                         </tr>
                     </tbody>

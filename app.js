@@ -1,37 +1,47 @@
-// app.js
 var app = angular.module('fitnessApp', ['ngRoute']);
 
-app.config(function($routeProvider, $httpProvider) {
+app.config(['$routeProvider', function ($routeProvider) {
     $routeProvider
-    .when('/login', { templateUrl: 'views/login.html', controller: 'AuthController' })
-    .when('/dashboard', { templateUrl: 'views/dashboard.html', controller: 'DashboardController' })
-    .when('/workouts', { templateUrl: 'views/workouts.html', controller: 'WorkoutController' })
-    .when('/bmi', { templateUrl: 'views/bmi.html', controller: 'BmiController' })
-    .when('/goals', { templateUrl: 'views/goal.html', controller: 'GoalController' }) // <--- New Route
-    .otherwise({ redirectTo: '/login' });
+        .when('/login', { templateUrl: 'views/login.html', controller: 'AuthController' })
+        .when('/dashboard', { templateUrl: 'views/dashboard.html', controller: 'DashboardController' })
+        .when('/workouts', { templateUrl: 'views/workouts.html', controller: 'WorkoutController' })
+        .when('/bmi', { templateUrl: 'views/bmi.html', controller: 'BmiController' })
+        .when('/goals', { templateUrl: 'views/goal.html', controller: 'GoalController' })
+        .when('/water', { templateUrl: 'views/water.html', controller: 'WaterTrackerController' })
+        .otherwise({ redirectTo: '/login' });
+}]);
 
-    $httpProvider.interceptors.push(function($q, $location) {
-        return {
-            request: function(config) {
-                const token = localStorage.getItem('token');
-                if (token) config.headers['Authorization'] = token;
-                return config;
-            },
-            responseError: function(rejection) {
-                if (rejection.status === 401) {
-                    localStorage.removeItem('token');
-                    $location.path('/login');
-                }
-                return $q.reject(rejection);
-            }
-        };
+app.run(['$rootScope', '$location', function ($rootScope, $location) {
+    $rootScope.$on('$routeChangeStart', function (event, next, current) {
+        const token = localStorage.getItem('token');
+        if (!token && next.originalPath !== '/login') {
+            $location.path('/login');
+        }
+        if (token && next.originalPath === '/login') {
+            $location.path('/dashboard');
+        }
     });
-});
+}]);
 
-app.controller('MainController', function($scope, $location) {
-    $scope.isLoggedIn = () => !!localStorage.getItem('token');
-    $scope.logout = () => {
+app.controller('MainController', ['$scope', '$location', function ($scope, $location) {
+
+    $scope.isLoggedIn = function () {
+        return !!localStorage.getItem('token');
+    };
+
+    $scope.$watch(function () {
+        return localStorage.getItem('username');
+    }, function (newVal) {
+        $scope.username = newVal || 'Athlete';
+    });
+
+    $scope.isActive = function (viewLocation) {
+        return viewLocation === $location.path();
+    };
+
+    $scope.logout = function () {
         localStorage.removeItem('token');
+        localStorage.removeItem('username');
         $location.path('/login');
     };
-});
+}]);

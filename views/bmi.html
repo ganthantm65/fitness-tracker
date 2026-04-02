@@ -1,47 +1,57 @@
-<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-    
-    <div class="glass-card p-8 rounded-3xl">
-        <h3 class="text-2xl font-bold mb-6 flex items-center">
-            <span class="mr-3">⚖️</span> BMI Calculator
-        </h3>
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <div class="glass-panel">
+        <div class="flex justify-between items-center mb-6">
+            <h3 class="text-2xl font-bold text-white">⚖️ BMI Calculator</h3>
+            <button ng-click="toggleSystem()" class="btn-glass text-xs px-3 py-1">
+                Switch to {{system === 'metric' ? 'Imperial' : 'Metric'}}
+            </button>
+        </div>
         
         <div class="space-y-6">
             <div>
-                <label class="text-sm text-slate-400 block mb-2">Height (cm)</label>
-                <input type="number" ng-model="calc.height" class="input-field text-xl" placeholder="e.g. 175">
+                <label class="text-sm text-slate-400 block mb-2">Height ({{system === 'metric' ? 'cm' : 'in'}})</label>
+                <input type="number" ng-model="calc.height" class="glass-input" placeholder="Height">
             </div>
             <div>
-                <label class="text-sm text-slate-400 block mb-2">Weight (kg)</label>
-                <input type="number" ng-model="calc.weight" class="input-field text-xl" placeholder="e.g. 70">
+                <label class="text-sm text-slate-400 block mb-2">Weight ({{system === 'metric' ? 'kg' : 'lb'}})</label>
+                <input type="number" ng-model="calc.weight" class="glass-input" placeholder="Weight">
             </div>
-            <button ng-click="calculateBMI()" class="btn-primary w-full py-4 rounded-2xl font-bold text-lg">
-                Calculate & Save
+            <button ng-click="saveBMI()" class="btn-glass-primary w-full py-3" ng-disabled="loading">
+                {{loading ? 'Saving...' : 'Save & Record'}}
             </button>
+            <div ng-if="error" class="text-red-400 text-sm text-center mt-2">{{error}}</div>
         </div>
 
-        <div ng-if="result" class="mt-8 p-6 bg-slate-800/50 rounded-2xl border border-blue-500/30 text-center fade-in">
-            <p class="text-slate-400 text-sm uppercase">Your Current BMI</p>
-            <h2 class="text-5xl font-black text-blue-400 my-2">{{result.bmi | number:1}}</h2>
-            <p class="font-bold" ng-class="getCategoryClass(result.category)">{{result.category}}</p>
+        <div ng-if="preview" class="mt-8 p-6 bg-black/20 rounded-2xl border border-white/5 text-center" ng-class="getCategoryClass(preview.category)">
+            <p class="text-slate-400 text-sm uppercase tracking-widest mb-2">Live Preview</p>
+            <h2 class="text-5xl font-black my-2">{{preview.bmi}}</h2>
+            <p class="font-bold uppercase">{{preview.category}}</p>
         </div>
     </div>
 
-    <div class="glass-card p-8 rounded-3xl">
-        <h3 class="text-xl font-bold mb-6">Progress Log</h3>
-        <div class="space-y-4 max-h-[400px] overflow-y-auto pr-2">
-            <div ng-repeat="item in bmiHistory | orderBy:'-date'" class="flex justify-between items-center p-4 bg-slate-800/30 rounded-xl border border-slate-700/50">
+    <div class="glass-panel">
+        <h3 class="text-xl font-bold mb-6 text-white border-b border-white/10 pb-4">History Log</h3>
+        <div class="space-y-3 max-h-[500px] overflow-y-auto pr-2">
+            <div ng-repeat="item in bmiHistory track by item._id" 
+                 class="flex justify-between items-center p-4 bg-white/5 rounded-xl border border-white/5">
                 <div>
-                    <p class="text-xs text-slate-500 uppercase font-bold">{{item.date}}</p>
-                    <p class="text-lg font-semibold">{{item.weight}} kg</p>
+                    <p class="text-xs text-slate-500 mb-1">{{item.createdAt | date:'mediumDate'}}</p>
+                    <p class="text-sm text-white">
+                        H: {{item.height}} | W: {{item.weight}} 
+                        <span class="text-[10px] opacity-40 ml-2 uppercase">{{item.system}}</span>
+                    </p>
                 </div>
-                <div class="text-right">
-                    <p class="text-xl font-bold" ng-class="getCategoryClass(item.category)">{{item.bmi | number:1}}</p>
-                    <p class="text-xs text-slate-500">{{item.category}}</p>
+                <div class="flex items-center gap-4">
+                    <div class="text-right">
+                        <p class="text-xl font-bold" ng-class="getCategoryClass(item.category)">{{item.bmi}}</p>
+                        <p class="text-[10px] text-slate-400 uppercase">{{item.category}}</p>
+                    </div>
+                    <button ng-click="removeBMI(item._id)" class="text-slate-600 hover:text-red-500 transition-colors">✕</button>
                 </div>
             </div>
             
-            <div ng-if="bmiHistory.length === 0" class="text-center py-10 text-slate-500 italic">
-                No logs yet. Start by calculating your BMI!
+            <div ng-if="bmiHistory.length === 0" class="text-center py-10 text-slate-500">
+                No records yet.
             </div>
         </div>
     </div>

@@ -1,40 +1,40 @@
-<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-    <div class="glass-card p-6 rounded-2xl">
-        <p class="text-slate-400 text-sm uppercase tracking-wider">Total Workouts</p>
-        <h2 class="text-4xl font-bold mt-2 text-blue-400">{{stats.totalWorkouts || 0}}</h2>
-    </div>
-
-    <div class="glass-card p-6 rounded-2xl">
-        <p class="text-slate-400 text-sm uppercase tracking-wider">Calories Burned</p>
-        <h2 class="text-4xl font-bold mt-2 text-orange-400">{{stats.totalCalories || 0}} <span class="text-sm">kcal</span></h2>
-    </div>
-
-    <div class="glass-card p-6 rounded-2xl">
-        <p class="text-slate-400 text-sm uppercase tracking-wider">Total Duration</p>
-        <h2 class="text-4xl font-bold mt-2 text-emerald-400">{{stats.totalDuration || 0}} <span class="text-sm">mins</span></h2>
+<div class="mb-8">
+    <div class="glass-panel text-center">
+        <h2 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400">
+            "{{dailyMotivation}}"
+        </h2>
     </div>
 </div>
 
-<div class="mt-8 glass-card p-8 rounded-2xl">
-    <div class="flex justify-between items-center mb-6">
-        <h3 class="text-xl font-semibold">Quick Actions</h3>
+<div class="dashboard-grid mb-8">
+    <div class="glass-panel stat-card">
+        <div class="stat-value text-glow">{{todayCalories}}</div>
+        <div class="stat-label">Today's Calories</div>
     </div>
-    <div class="flex gap-4">
-        <a href="#!/workouts" class="btn-primary px-6 py-3 rounded-xl font-semibold">Log New Workout</a>
-        <button class="bg-slate-700 hover:bg-slate-600 px-6 py-3 rounded-xl font-semibold">Update BMI</button>
+
+    <!-- Embedded Water Widget -->
+    <div class="glass-panel flex flex-col items-center justify-center relative overflow-hidden" ng-controller="WaterTrackerController">
+        <div class="absolute bottom-0 left-0 right-0 bg-blue-500/20" ng-style="getProgressStyle()"></div>
+        <div class="relative z-10 text-center">
+            <h3 class="text-lg font-bold mb-2 text-white">Hydration</h3>
+            <div class="stat-value text-blue-400">{{currentIntake}} <span class="text-sm">/ {{dailyGoal}}ml</span></div>
+            <button ng-click="addWater(250)" class="btn-glass-primary mt-4 rounded-full w-12 h-12 flex items-center justify-center text-xl pb-1" title="Add 250ml">
+                +
+            </button>
+        </div>
     </div>
 </div>
 
-<div class="grid md:grid-cols-2 gap-6 mt-8">
-
-    <div class="glass-card p-6 rounded-2xl">
-        <h3 class="text-lg font-semibold mb-4">Weekly Calories</h3>
+<div class="dashboard-grid">
+    <div class="glass-panel">
+        <h3 class="text-lg font-semibold mb-6 tracking-wide text-gray-300">Weekly Calorie Burn</h3>
         <canvas id="calorieChart"></canvas>
     </div>
 
-    <div class="glass-card p-6 rounded-2xl">
-        <h3 class="text-lg font-semibold mb-4">Workout Distribution</h3>
-        <canvas id="typeChart"></canvas>
+    <div class="glass-panel">
+        <h3 class="text-lg font-semibold mb-6 tracking-wide text-gray-300">Workout Distribution</h3>
+        <div class="w-2/3 mx-auto">
+            <canvas id="typeChart"></canvas>
+        </div>
     </div>
-
 </div>
